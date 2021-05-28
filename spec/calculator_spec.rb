@@ -35,5 +35,13 @@ RSpec.describe Calculator do
         expect(subject.calculate).to eq(10000)
       end
     end
+
+    context 'with nested parens' do
+      let(:sum) { "(8 + (2 - 1)) ** 4" }
+
+      it 'gives the correct result' do
+        expect(subject.calculate).to eq(6561)
+      end
+    end
   end
 end
