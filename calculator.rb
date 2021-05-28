@@ -4,13 +4,30 @@ class Calculator
   OPERATOR_PRECEDENCE = ['**', '*', '/', '+', '-']
 
   def initialize(sum)
-    @parsed_sum  = sum.split(" ")
+    @str = sum
   end
 
   def calculate
-    while @parsed_sum.length > 1
+    parse(@str)
+  end
+
+  def parse(str)
+    if idx = str.index('(')
+      ridx = str.rindex(')')
+      subsum = str.slice!(idx, (ridx+1)-idx)[1..-2]
+
+      res = parse(subsum)
+      str.insert(idx, res.to_s)
+    end
+
+    parsed_sum = str.split(" ")
+    sub_calculate(parsed_sum)
+  end
+
+  def sub_calculate(parsed)
+    while parsed.length > 1
       OPERATOR_PRECEDENCE.each do |operator|
-        idx = @parsed_sum.index(operator)
+        idx = parsed.index(operator)
 
         next unless idx
 
@@ -19,14 +36,14 @@ class Calculator
         subsum = []
 
         3.times do
-          subsum << @parsed_sum.delete_at(idx)
+          subsum << parsed.delete_at(idx)
         end
 
         result = subsum[0].to_i.send(subsum[1], subsum[2].to_i)
-        @parsed_sum.insert(idx, result)
+        parsed.insert(idx, result)
       end
     end
 
-    @parsed_sum.first
+    parsed.first
   end
 end
